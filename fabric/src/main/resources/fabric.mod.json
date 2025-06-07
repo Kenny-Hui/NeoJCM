@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "jsblock",
+	"version": "${version}",
+	"name": "NeoJCM",
+	"description": "Railway facilities addon for the NeoMTR mod",
+	"authors": [
+		"LX86"
+	],
+	"contributors": [
+		"1081MTR",
+		"AozoraSky",
+		"StrikeSNC",
+		"Dooji",
+		"Jonathan Ho",
+		"CinderaceOTS"
+	],
+	"contact": {
+		"sources": "https://github.com/Kenny-Hui/NeoJCM",
+		"issues": "https://github.com/Kenny-Hui/NeoJCM/issues"
+	},
+	"license": "MIT",
+	"icon": "icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.lx862.jcm.JCMFabric"
+		],
+		"client": [
+			"com.lx862.jcm.JCMFabricClient"
+		],
+		"modmenu": [
+			"com.lx862.jcm.ModMenuConfig"
+		]
+	},
+	"mixins": [
+		"jsblock-common.mixins.json"
+	],
+	"depends": {
+		"fabric": "*",
+		"minecraft": ">=1.21 <=1.21.1",
+		"mtr": ">=300.6.1"
+	}
+}

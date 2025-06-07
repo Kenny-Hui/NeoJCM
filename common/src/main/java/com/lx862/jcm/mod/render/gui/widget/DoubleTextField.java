@@ -1,0 +1,156 @@
+package com.lx862.jcm.mod.render.gui.widget;
+
+import com.lx862.jcm.mod.render.RenderHelper;
+import com.lx862.jcm.mod.util.JCMLogger;
+import com.lx862.jcm.mod.util.TextCategory;
+import com.lx862.jcm.mod.util.TextUtil;
+import mtr.screen.WidgetBetterTextField;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.MutableComponent;
+
+import java.math.BigDecimal;
+
+/**
+ * Text Field Widget that is specifically designed for entering number only
+ */
+public class DoubleTextField extends WidgetBetterTextField implements RenderHelper {
+    private final double min;
+    private final double max;
+    private final String prefix;
+    private final double defaultValue;
+
+    public DoubleTextField(int x, int y, int width, int height, double min, double max, double defaultValue, String prefix) {
+        super(String.valueOf(defaultValue), 16);
+        setPosition(x, y);
+        setSize(width, height);
+        this.min = min;
+        this.max = max;
+        this.prefix = prefix;
+        this.defaultValue = defaultValue;
+    }
+
+    public DoubleTextField(int x, int y, int width, int height, double min, double max, double defaultValue, MutableComponent prefix) {
+        this(x, y, width, height, min, max, defaultValue, prefix.getString());
+    }
+
+    public DoubleTextField(int x, int y, int width, int height, double min, double max, double defaultValue) {
+        this(x, y, width, height, min, max, defaultValue, (String)null);
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        String prevValue = getValue();
+        boolean bl = super.charTyped(chr, modifiers);
+
+        try {
+            String newString = getValue();
+            double val = Double.parseDouble(newString);
+            if(val < min || val > max) {
+                JCMLogger.debug("DoubleTextField: Value too large or small");
+                setValue(prevValue);
+                return false;
+            }
+        } catch (Exception e) {
+            setValue(prevValue);
+            return false;
+        }
+
+        return bl;
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float tickDelta) {
+        super.renderWidget(guiGraphics, mouseX, mouseY, tickDelta);
+        final Font font = Minecraft.getInstance().font;
+
+        if(prefix != null) {
+            drawPrefix(guiGraphics, font);
+        }
+
+        drawUpDownButton(guiGraphics, font);
+    }
+
+    protected void drawPrefix(GuiGraphics guiGraphics, Font font) {
+        int prefixWidth = font.width(prefix);
+        int prefixX = getX() - prefixWidth;
+        int prefixY = getY() + (getHeight() / 2) - (9 / 2);
+
+        guiGraphics.drawString(font, prefix, prefixX, prefixY, 0xFFFFFFFF, true);
+    }
+
+    protected void drawUpDownButton(GuiGraphics guiGraphics, Font font) {
+        MutableComponent upArrow = TextUtil.translatable(TextCategory.GUI, "widget.numeric_text_field.increment");
+        MutableComponent dnArrow = TextUtil.translatable(TextCategory.GUI, "widget.numeric_text_field.decrement");
+        int fontHeight = 9;
+        int startY = (height - (fontHeight * 2));
+        int upWidth = font.width(upArrow);
+        int dnWidth = font.width(dnArrow);
+        guiGraphics.drawString(font, upArrow, getX() + width - upWidth - 2, getY() + startY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, dnArrow, getX() + width - dnWidth - 2, getY() + startY + fontHeight, 0xFFFFFFFF, false);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if(visible && active && isFocused()) {
+            if(scrollY > 0) {
+                increment();
+            } else {
+                decrement();
+            }
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        MutableComponent upArrow = TextUtil.translatable(TextCategory.GUI, "widget.numeric_text_field.increment");
+        MutableComponent dnArrow = TextUtil.translatable(TextCategory.GUI, "widget.numeric_text_field.decrement");
+        int fontHeight = 9;
+        int startY = getY() + (height - (fontHeight * 2)) / 2;
+        int upWidth = Minecraft.getInstance().font.width(upArrow.getString());
+        int dnWidth = Minecraft.getInstance().font.width(dnArrow.getString());
+
+        if(inRectangle(mouseX, mouseY, getX() + width - upWidth - 2, startY, upWidth, fontHeight)) {
+            increment();
+        }
+
+        if(inRectangle(mouseX, mouseY, getX() + width - dnWidth - 2, startY + fontHeight, dnWidth, fontHeight)) {
+            decrement();
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    public double getNumber() {
+        try {
+            return Double.parseDouble(getValue());
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public void setValue(double value) {
+        if(value < min || value > max) return;
+        setValue(String.valueOf(value));
+    }
+
+    private void increment() {
+        try {
+            BigDecimal result = new BigDecimal(getValue()).add(new BigDecimal("0.1"));
+            setValue(result.doubleValue());
+        } catch (Exception e) {
+            setValue(defaultValue);
+        }
+    }
+
+    private void decrement() {
+        try {
+            BigDecimal result = new BigDecimal(getValue()).subtract(new BigDecimal("0.1"));
+            setValue(result.doubleValue());
+        } catch (Exception e) {
+            setValue(defaultValue);
+        }
+    }
+}
