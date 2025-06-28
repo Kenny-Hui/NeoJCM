@@ -5,7 +5,6 @@ import com.lx862.jcm.mod.data.pids.preset.PIDSContext;
 import com.lx862.jcm.mod.data.pids.preset.components.*;
 import com.lx862.jcm.mod.render.RenderHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
 
@@ -24,12 +23,12 @@ public abstract class PIDSComponent implements RenderHelper {
     protected final double height;
 
     static {
-        componentList.put("arrival_destination", ArrivalDestinationComponent::parseComponent);
+        componentList.put("arrival_destination", DestinationMessageComponent::parseComponent);
         componentList.put("arrival_eta", ArrivalETAComponent::parseComponent);
         componentList.put("arrival_car", ArrivalCarComponent::parseComponent);
         componentList.put("clock", ClockComponent::parseComponent);
         componentList.put("cycle", CycleComponent::parseComponent);
-        componentList.put("custom_text", CustomTextComponent::parseComponent);
+        componentList.put("custom_text", StaticCustomMessageComponent::parseComponent);
         componentList.put("custom_texture", CustomTextureComponent::parseComponent);
         componentList.put("platform_text", PlatformComponent::parseComponent);
         componentList.put("station_name", StationNameComponent::parseComponent);
