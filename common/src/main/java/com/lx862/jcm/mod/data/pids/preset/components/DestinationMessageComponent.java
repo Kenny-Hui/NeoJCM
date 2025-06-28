@@ -48,6 +48,7 @@ public class DestinationMessageComponent extends TextComponent {
     }
 
     public PIDSDisplay getDisplayString(ScheduleEntry arrival) {
+        String customMessage = customMessageOverride == null ? "" : customMessageOverride;
         final Route route = ClientData.DATA_CACHE.routeIdMap.get(arrival.routeId);
         if(route == null) return null;
 
@@ -55,7 +56,7 @@ public class DestinationMessageComponent extends TextComponent {
 
         final int languageTicks = (int) Math.floor(JCMServerStats.getGameTick()) / TextComponent.SWITCH_LANG_DURATION;
         final String[] destinationSplit;
-        final String[] customMessageSplit = customMessageOverride.split("\\|");
+        final String[] customMessageSplit = customMessage.split("\\|");
         final String[] tempDestinationSplit = destination.split("\\|");
 
         if (getRouteNumber(route).isEmpty()) {
@@ -78,7 +79,7 @@ public class DestinationMessageComponent extends TextComponent {
             }
             destinationSplit = newDestinations.toArray(new String[0]);
         }
-        final int messageCount = destinationSplit.length + (customMessageOverride.isEmpty() ? 0 : customMessageSplit.length);
+        final int messageCount = destinationSplit.length + (customMessage.isEmpty() ? 0 : customMessageSplit.length);
         boolean renderCustomMessage = languageTicks % messageCount >= destinationSplit.length;
         int languageIndex = (languageTicks % messageCount) - (renderCustomMessage ? destinationSplit.length : 0);
         String strToDisplay = renderCustomMessage ? customMessageSplit[languageIndex] : destinationSplit[languageIndex];
