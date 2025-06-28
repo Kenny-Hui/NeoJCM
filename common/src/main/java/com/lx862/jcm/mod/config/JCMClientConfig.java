@@ -10,6 +10,7 @@ public class JCMClientConfig extends Config {
 
     private static final Path CONFIG_PATH = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("jsblock_client.json");
     public boolean disableRendering;
+    public boolean debug;
 
     public void read() {
         read(CONFIG_PATH);
@@ -28,6 +29,7 @@ public class JCMClientConfig extends Config {
     public void fromJson(JsonObject jsonConfig) {
         JCMLogger.info("Loading client config...");
         this.disableRendering = jsonConfig.get("disable_rendering").getAsBoolean();
+        this.debug = jsonConfig.get("debug").getAsBoolean();
     }
 
     @Override
@@ -35,6 +37,7 @@ public class JCMClientConfig extends Config {
         JCMLogger.info("Writing client config...");
         final JsonObject jsonConfig = new JsonObject();
         jsonConfig.addProperty("disable_rendering", disableRendering);
+        jsonConfig.addProperty("debug", debug);
         return jsonConfig;
     }
 }
