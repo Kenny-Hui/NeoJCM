@@ -88,7 +88,7 @@ public class ScriptPIDSPreset extends PIDSPresetBase {
     @Override
     public void render(PIDSBlockEntity be, PoseStack poseStack, MultiBufferSource bufferSource, Level world, BlockPos pos, Direction facing, List<ScheduleEntry> arrivals, boolean[] rowHidden, float tickDelta, int x, int y, int width, int height) {
         PIDSWrapper pidsState = new PIDSWrapper(be, arrivals, width, height);
-        ScriptInstance<PIDSWrapper> scriptInstance = JCMScripting.getScriptManager().getInstanceManager().getInstance(new UniqueKey("jcm", "pids", getId(), pos), () -> new PIDSScriptInstance(be, parsedScripts, pidsState));
+        ScriptInstance<PIDSWrapper> scriptInstance = JCMScripting.getScriptManager().getInstanceManager().getInstance(new UniqueKey("jcm", "pids", getId(), pos), () -> new PIDSScriptInstance(be, parsedScripts, getId(), pidsState));
 
         if(scriptInstance instanceof PIDSScriptInstance) {
             PIDSScriptInstance pidsScriptInstance = (PIDSScriptInstance) scriptInstance;
